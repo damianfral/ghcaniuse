@@ -10,23 +10,31 @@ table
     width: 100%;
 }
 
-thead
+thead h3
 {
     font-weight: 600;
     text-transform: uppercase;
     font-size: 14px;
+    margin-bottom: 8px;
 }
 
 thead td
 {
     cursor: pointer;
+    padding-bottom: 0px;
 }
 
-thead tr td p:nth-child(2)
+.arrows
 {
-    font-size: 12px;
-    font-weight: 400;
-    margin-top: 0;
+    font-size: 20px;
+    margin: 0;
+    color: #AAA;
+}
+
+.sort-down .down-arrow,
+.sort-up   .up-arrow
+{
+    color: black;
 }
 
 tbody
@@ -43,7 +51,7 @@ tbody tr td:nth-child(1)
 th,
 td
 {
-    padding: 12px 12px;
+    padding: 8px 16px;
     text-align: center;
     /*border-bottom: 1px solid #E1E1E1;*/
 }
