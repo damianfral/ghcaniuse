@@ -4,22 +4,35 @@ html, body
 }
 
 th,
-td {
-  padding: 12px 15px;
-  text-align: center;
-  border-bottom: 1px solid #E1E1E1; }
-th:first-child,
-td:first-child {
-  padding-left: 0; }
+td
+{
+    padding: 12px 15px;
+    text-align: center;
+    border-bottom: 1px solid #E1E1E1;
+}
+
+th:nth-child(1),
+td:nth-child(1)
+{
+    padding-left: 0;
+}
+
 th:last-child,
-td:last-child {
-  padding-right: 0; }
+td:last-child
+{
+    padding-right: 0;
+}
 
 thead
 {
     font-weight: 600;
     text-transform: uppercase;
     font-size: 14px;
+}
+
+thead td
+{
+    cursor: pointer;
 }
 
 thead tr td p:nth-child(2)
@@ -32,18 +45,12 @@ thead tr td p:nth-child(2)
 tbody
 {
     font-size: 20px;
-    overflow-y: scroll;
 }
 
-tbody tr td:first-child
+tbody tr td:nth-child(1)
 {
     text-align: left;
     font-size: 14px;
-}
-
-tr:hover
-{
-    background-color: rgba();
 }
 
 table
