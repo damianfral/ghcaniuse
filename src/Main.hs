@@ -27,7 +27,7 @@ getLanguageExtensions r = lines <$> shellOutput
         command = mconcat
                       [ "nix-shell -I ~/devel/ -p "
                       , showNix r
-                      , " --command 'ghc --supported-extensions'" ]
+                      , " --command 'ghc --supported-languages'" ]
         shellOutput = strict $ inshell command mempty
 
 isNoExtension :: Text -> Bool
