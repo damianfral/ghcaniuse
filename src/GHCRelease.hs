@@ -16,7 +16,11 @@ import           Text.Parsec
 data GHCRelease = GHCRelease
     { releaseDate    :: Day
     , releaseVersion :: (Int, Int, Int)
-    } deriving (Show, Eq, Generic, Ord)
+    } deriving (Show, Generic, Ord)
+
+instance Eq GHCRelease where
+    (GHCRelease _ (a,b,_)) == (GHCRelease _ (x,y,_)) = [a,b] == [x,y]
+    _ == _ = False
 
 instance ToJSON Day where
     toJSON = String . pack . showGregorian
