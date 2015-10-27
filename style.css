@@ -3,24 +3,11 @@ html, body
     font-family: 'Roboto', sans-serif;
 }
 
-th,
-td
-{
-    padding: 12px 15px;
-    text-align: center;
-    border-bottom: 1px solid #E1E1E1;
-}
+* { box-sizing: border-box; }
 
-th:nth-child(1),
-td:nth-child(1)
+table
 {
-    padding-left: 0;
-}
-
-th:last-child,
-td:last-child
-{
-    padding-right: 0;
+    width: 100%;
 }
 
 thead
@@ -53,7 +40,37 @@ tbody tr td:nth-child(1)
     font-size: 14px;
 }
 
-table
+th,
+td
 {
-    width: 100%;
+    padding: 12px 12px;
+    text-align: center;
+    /*border-bottom: 1px solid #E1E1E1;*/
+}
+
+th:nth-child(1),
+td:nth-child(1)
+{
+    padding-left: 8px;
+}
+
+th:last-child,
+td:last-child
+{
+    padding-right: 8px;
+}
+
+.supported,
+.not-supported
+{
+    color: white;
+}
+.supported
+{
+    background-color: #39b54a;
+}
+
+.not-supported
+{
+    background-color: #c44230;
 }
