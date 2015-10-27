@@ -75,9 +75,8 @@ generateHTML table = html_ $ do
         go _           = td_ ! class_ "not-supported" $ "-"
 
         displayRelease :: GHCRelease -> Html ()
-        displayRelease (GHCRelease d (x,y,z)) = sequence_ $ p_ . toHtml <$>
-            [ "GHC-" <> intercalate "." (show <$> [x,y,z])
-            , pack $ showGregorian d ]
+        displayRelease (GHCRelease d (x,y,z)) =
+            toHtml $ "GHC-" <> intercalate "." (show <$> [x,y])
 
         script_' :: Text -> Html ()
         script_' x = makeElement "script" ! type_ "text/javascript" ! src_ x $ ""
@@ -88,7 +87,7 @@ generateHTML table = html_ $ do
 main :: IO ()
 main = do
     scrapGHCReleases
-        >>= pure . catMaybes . fmap (uncurry parseGHCReleases)
+        >>= pure . nub . catMaybes . fmap (uncurry parseGHCReleases)
         >>= (flip execStateT mempty . mapM_ process)
         >>= \x -> do renderToFile "index.html" $ generateHTML x
                      BS.writeFile "ghc-extensions.json" $ encode x
