@@ -70,8 +70,8 @@ generateHTML table = html_ $ do
     where
         allExtensions  = sort $ filterExtensions $ keys table
         allReleases    = reverse $ sort $ nub $ mconcat $ snd <$> toList table
-        go (Just True) = "✓"
-        go _           = "✕"
+        go (Just True) = td_ ! class_ "supported"     $ "✓"
+        go _           = td_ ! class_ "not-supported" $ "-"
 
         displayRelease :: GHCRelease -> Html ()
         displayRelease (GHCRelease d (x,y,z)) = sequence_ $ p_ . toHtml <$>
