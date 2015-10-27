@@ -55,7 +55,7 @@ generateHTML table = html_ $ do
     body_ $ do
         table_ ! id_ "ghc-extensions" $ do
             thead_ $ tr_ $ do
-                td_ $ "extensions"
+                td_ $ h3_ "extensions" >> arrows
                 mapM_ td_ $ displayRelease <$> allReleases
             tbody_ $
                 forM_ allExtensions $ \extension ->
@@ -75,8 +75,13 @@ generateHTML table = html_ $ do
         go _           = td_ ! class_ "not-supported" $ "-"
 
         displayRelease :: GHCRelease -> Html ()
-        displayRelease (GHCRelease d (x,y,z)) =
-            toHtml $ "GHC-" <> intercalate "." (show <$> [x,y])
+        displayRelease (GHCRelease d (x,y,z)) = do
+            h3_ $ toHtml $ "GHC-" <> intercalate "." (show <$> [x,y])
+            arrows
+
+        arrows = p_ ! class_ "arrows" $ do
+                     span_ ! class_ "down-arrow" $ "ꜜ"
+                     span_ ! class_ "up-arrow"   $ "ꜛ"
 
         script_' :: Text -> Html ()
         script_' x = makeElement "script" ! type_ "text/javascript" ! src_ x $ ""
