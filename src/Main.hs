@@ -62,7 +62,7 @@ generateHTML table = html_ $ do
                     tr_ $ do
                         td_ $ toHtml extension
                         forM_ allReleases $ \release ->
-                            td_ $ go $ elem release <$> lookup extension table
+                            go $ elem release <$> lookup extension table
 
         script_' "tablesort.min.js"
         script_ [type_ "text/javascript"]
