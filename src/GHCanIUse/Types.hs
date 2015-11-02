@@ -5,7 +5,7 @@ module GHCanIUse.Types where
 import           BasicPrelude
 import           Data.Aeson
 import           Data.Text          (pack)
-import           Data.Time.Calendar (Day, showGregorian)
+import           Data.Time.Calendar (Day (..), showGregorian)
 import           GHC.Generics
 import           Text.Parsec
 
@@ -23,8 +23,13 @@ instance ToJSON Day where
 
 instance ToJSON GHCRelease
 
+instance Hashable Day where
+    hashWithSalt s (ModifiedJulianDay x) = s `hashWithSalt` x
+
+instance Hashable GHCRelease
+
 type Parser = Parsec String ()
 
-type URL = Text
+type URL = String
 type ReleasesMap = HashMap Text [GHCRelease]
-type DocLinksMap = HashMap (Text, URL) [GHCRelease]
+type DocLinksMap = HashMap (Text, GHCRelease) URL
