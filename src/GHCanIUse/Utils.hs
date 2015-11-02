@@ -1,9 +1,9 @@
 module GHCanIUse.Utils where
 
-import BasicPrelude hiding (isPrefixOf)
-import GHCanIUse.Types
-import Turtle
-import Data.Text (index, isPrefixOf)
+import           BasicPrelude    hiding (isPrefixOf)
+import           Data.Text       (index, isPrefixOf)
+import           GHCanIUse.Types
+import           Turtle
 
 
 showNix :: GHCRelease -> Text

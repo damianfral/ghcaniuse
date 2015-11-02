@@ -6,14 +6,14 @@ module GHCanIUse.Scrapper
     , scrapDocLatest)
 where
 
-import           BasicPrelude hiding ((<|>), try)
+import           BasicPrelude       hiding (try, (<|>))
 import           Data.Maybe
-import           Data.Text           (pack, unpack)
-import           Data.Time.Calendar  (Day, fromGregorian, showGregorian)
+import           Data.Text          (pack, unpack)
+import           Data.Time.Calendar (Day, fromGregorian, showGregorian)
 import           GHC.Generics
+import           GHCanIUse.Types
 import           Text.HTML.Scalpel
 import           Text.Parsec
-import           GHCanIUse.Types
 -- import Data.List
 
 -- Releases

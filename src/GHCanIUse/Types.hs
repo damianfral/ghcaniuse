@@ -4,10 +4,10 @@ module GHCanIUse.Types where
 
 import           BasicPrelude
 import           Data.Aeson
-import           Data.Time.Calendar  (Day, showGregorian)
+import           Data.Text          (pack)
+import           Data.Time.Calendar (Day, showGregorian)
 import           GHC.Generics
 import           Text.Parsec
-import Data.Text (pack)
 
 data GHCRelease = GHCRelease
     { releaseDate    :: Day

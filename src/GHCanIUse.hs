@@ -5,12 +5,12 @@ module GHCanIUse
 
 import           BasicPrelude
 import           Control.Monad.Trans.State
-import           Data.HashMap.Lazy hiding (filter, (!))
+import           Data.HashMap.Lazy         hiding (filter, (!))
 
-import GHCanIUse.Types as G
-import GHCanIUse.Scrapper as G
-import GHCanIUse.Utils as G
-import           GHCanIUse.Render as G
+import           GHCanIUse.Render          as G
+import           GHCanIUse.Scrapper        as G
+import           GHCanIUse.Types           as G
+import           GHCanIUse.Utils           as G
 
 
 processRelease :: GHCRelease -> StateT ReleasesMap IO ()

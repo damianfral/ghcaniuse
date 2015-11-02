@@ -2,12 +2,12 @@
 
 module GHCanIUse.Render where
 
-import BasicPrelude hiding (lookup)
+import           BasicPrelude      hiding (lookup)
+import           Data.HashMap.Lazy hiding (filter, (!))
+import           GHCanIUse.Types
+import           GHCanIUse.Utils
 import           Lucid
 import           Lucid.Base
-import GHCanIUse.Types
-import GHCanIUse.Utils
-import           Data.HashMap.Lazy hiding (filter, (!))
 
 
 (!) a b = a `with` [b]
