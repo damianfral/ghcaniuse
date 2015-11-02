@@ -26,3 +26,8 @@ isNoExtension ext
 
 filterExtensions :: [Text] -> [Text]
 filterExtensions = filter $ not . isNoExtension
+
+splitEvery :: Int -> [a] -> [[a]]
+splitEvery i = unfoldr go
+    where go [] = Nothing
+          go x  = Just $ splitAt i x
