@@ -7,10 +7,9 @@ module GHCanIUse.Scrapper
 where
 
 import           BasicPrelude       hiding (try, (<|>))
-import           Data.Maybe
 import           Data.Text          (pack, unpack)
-import           Data.Time.Calendar (Day, fromGregorian, showGregorian)
-import           GHC.Generics
+import           Data.Time.Calendar (Day, fromGregorian)
+import           GHCanIUse.Utils
 import           GHCanIUse.Types
 import           Text.HTML.Scalpel
 import           Text.Parsec
@@ -72,9 +71,9 @@ parseGHCReleases date code = GHCRelease <$> parseReleaseDate date
 
 extensionIndexScrapper :: Scraper String [(String, String)]
 extensionIndexScrapper = fmap mconcat $ chroots "tbody" $ do
-    flags <- texts $ "tr" // "td" // "code"
-    descriptions <- attrs "href" $ "tr" // "td" // "a"
-    return $ zip (drop 2 <$> flags) descriptions
+    allCells <- texts $ "tr" // "td"
+    let [column1, column2] = transpose $ take 2 <$> splitEvery 4 allCells
+    return $ zip (drop 2 <$> column1) column2
 
 
 -- Docs
