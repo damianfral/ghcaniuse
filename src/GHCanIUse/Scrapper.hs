@@ -1,34 +1,27 @@
-{-# LANGUAGE DeriveGeneric #-}
+{-# LANGUAGE NoOverloadedStrings #-}
 
-module GHCRelease
-    (GHCRelease(..), scrapGHCReleases, parseGHCReleases)
+module GHCanIUse.Scrapper
+    ( scrapGHCReleases
+    , scrapDoc
+    , scrapDocLatest)
 where
 
-import           Data.Aeson
+import           BasicPrelude hiding ((<|>), try)
 import           Data.Maybe
-import           Data.Text           (pack)
+import           Data.Text           (pack, unpack)
 import           Data.Time.Calendar  (Day, fromGregorian, showGregorian)
 import           GHC.Generics
 import           Text.HTML.Scalpel
 import           Text.Parsec
+import           GHCanIUse.Types
+-- import Data.List
 
+-- Releases
 
-data GHCRelease = GHCRelease
-    { releaseDate    :: Day
-    , releaseVersion :: (Int, Int, Int)
-    } deriving (Show, Generic, Ord)
-
-instance Eq GHCRelease where
-    (GHCRelease _ (a,b,_)) == (GHCRelease _ (x,y,_)) = [a,b] == [x,y]
-    _ == _ = False
-
-instance ToJSON Day where
-    toJSON = String . pack . showGregorian
-
-instance ToJSON GHCRelease
-
-scrapGHCReleases :: IO ([(String, String)])
-scrapGHCReleases = fromMaybe [] <$> scrapeURL "https://www.haskell.org/ghc/" versionsScrapper
+scrapGHCReleases :: IO [GHCRelease]
+scrapGHCReleases = do
+    allReleases <- fromMaybe [] <$> scrapeURL "https://www.haskell.org/ghc/" versionsScrapper
+    return $ nub . catMaybes . fmap (uncurry parseGHCReleases) $ allReleases
 
 versionsScrapper :: Scraper String [(String, String)]
 versionsScrapper = chroot ("td" @: [hasClass "rightpane"] // "dl") $ do
@@ -36,10 +29,8 @@ versionsScrapper = chroot ("td" @: [hasClass "rightpane"] // "dl") $ do
     v <- texts $ "dd"
     return $ zip r v
 
-type Parser = Parsec String ()
-
 numberParser :: Parser Int
-numberParser = many1 digit >>= \d -> return (read d :: Int)
+numberParser = many1 digit >>= \d -> return ((read $ pack d) :: Int)
 
 monthParser :: Parser Int
 monthParser = foldl1 (<|>) $  zipWith ((<*)) numbers months
@@ -78,3 +69,21 @@ parseReleaseNumber = eitherToMaybe . runParser p () ""
 parseGHCReleases :: String -> String -> Maybe GHCRelease
 parseGHCReleases date code = GHCRelease <$> parseReleaseDate date
                                         <*> parseReleaseNumber code
+
+extensionIndexScrapper :: Scraper String [(String, String)]
+extensionIndexScrapper = fmap mconcat $ chroots "tbody" $ do
+    flags <- texts $ "tr" // "td" // "code"
+    descriptions <- attrs "href" $ "tr" // "td" // "a"
+    return $ zip (drop 2 <$> flags) descriptions
+
+
+-- Docs
+scrapDoc (GHCRelease _ (x,y,z)) = scrapeURL url $ extensionIndexScrapper
+    where url = mconcat [ "https://downloads.haskell.org/~ghc/"
+                        , intercalate "." $ unpack.show <$> [x,y,z]
+                        , "/docs/html/users_guide/flag-reference.html" ]
+
+scrapDocLatest = scrapeURL url $ extensionIndexScrapper
+    where url = mconcat [ "https://downloads.haskell.org/~ghc/"
+                        , "latest"
+                        , "/docs/html/users_guide/flag-reference.html" ]
