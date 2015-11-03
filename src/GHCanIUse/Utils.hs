@@ -1,7 +1,7 @@
 module GHCanIUse.Utils where
 
 import           BasicPrelude    hiding (isPrefixOf)
-import           Data.Text       (index, isPrefixOf)
+import           Data.Text       (index, isPrefixOf, pack, unpack)
 import           GHCanIUse.Types
 import           Turtle
 
@@ -31,3 +31,10 @@ splitEvery :: Int -> [a] -> [[a]]
 splitEvery i = unfoldr go
     where go [] = Nothing
           go x  = Just $ splitAt i x
+
+ghcUserGuideURL (GHCRelease _ (x,y,z)) = mconcat
+    [ "https://downloads.haskell.org/~ghc/"
+    , intercalate "." $ unpack.show <$> [x,y,z]
+    , "/docs/html/users_guide/"]
+
+ghcFlagReferenceURL = (<> "flag-reference.html") . ghcUserGuideURL
