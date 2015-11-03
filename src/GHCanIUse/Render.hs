@@ -40,7 +40,7 @@ generateHTMLTable releasesMap docLinksMap = table_ ! id_ "ghc-extensions" $ do
 
         go ext release (Just True) = td_ ! class_ "supported" $
             a_ ! href_ (getDocLink' ext release) $ "✓"
-        go _ _ _ = td_ ! class_ "not-supported" $ "-"
+        go _ _ _ = td_ ! class_ "not-supported" $ p_ "-"
 
         getDocLink' = getDocLink releasesMap docLinksMap
 
