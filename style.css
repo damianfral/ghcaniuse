@@ -48,42 +48,48 @@ tbody tr td:nth-child(1)
     font-size: 14px;
 }
 
-th,
 td
 {
-    padding: 8px 16px;
-    text-align: center;
-    /*border-bottom: 1px solid #E1E1E1;*/
+    padding: 0;
+    height: 32px;
 }
 
-th:nth-child(1),
-td:nth-child(1)
+td > h3,
+td > a,
+td > p
 {
-    padding-left: 8px;
+    display: flex;
+    justify-content: center;
+    margin: 0;
 }
 
-th:last-child,
-td:last-child
-{
-    padding-right: 8px;
-}
+/*th:nth-child(1),*/
+/*td:nth-child(1)*/
+/*{*/
+/*    padding-left: 8px;*/
+/*}*/
+
+/*th:last-child,*/
+/*td:last-child*/
+/*{*/
+/*    padding-right: 8px;*/
+/*}*/
 
 .supported a,
 .not-supported
 {
     color: white;
-}
-
-.supported a
-{
-    display: flex;
-    justify-content: center;
     text-decoration: none;
 }
 
 .supported
 {
     background-color: #39b54a;
+}
+
+.supported:hover
+{
+    background-color: #129324;
 }
 
 .not-supported
