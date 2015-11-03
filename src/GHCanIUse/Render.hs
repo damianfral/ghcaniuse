@@ -13,9 +13,12 @@ import           Lucid.Base
 
 (!) a b = a `with` [b]
 
-displayRelease :: GHCRelease -> Html ()
-displayRelease (GHCRelease d (x,y,z)) = do
-    h3_ $ toHtml $ "GHC-" <> intercalate "." (show <$> [x,y])
+displayRelease :: GHCRelease -> Text
+displayRelease (GHCRelease d (x,y,z)) = "GHC-" <> intercalate "." (show <$> [x,y])
+
+displayReleaseHTML :: GHCRelease -> Html ()
+displayReleaseHTML release = do
+    h3_ $ toHtml $ displayRelease release
     arrows
 
 arrows = p_ ! class_ "arrows" $ do
@@ -26,7 +29,7 @@ generateHTMLTable :: ReleasesMap -> DocLinksMap -> Html ()
 generateHTMLTable releasesMap docLinksMap = table_ ! id_ "ghc-extensions" $ do
     thead_ $ tr_ $ do
         td_ $ h3_ "extensions" >> arrows
-        mapM_ td_ $ displayRelease <$> allReleases
+        mapM_ td_ $ displayReleaseHTML <$> allReleases
     tbody_ $
         forM_ allExtensions $ \extension ->
             tr_ $ do
@@ -38,10 +41,12 @@ generateHTMLTable releasesMap docLinksMap = table_ ! id_ "ghc-extensions" $ do
         allReleases    = reverse $ sort $ nub $ mconcat $ snd <$> toList releasesMap
         latestRelease = maximum allReleases
 
-        go ext release (Just True) = td_ ! class_ "supported" $
-            a_ ! href_ (getDocLink' ext release) $ "✓"
-        go _ _ _ = td_ ! class_ "not-supported" $ p_ "-"
-
+        go ext release (Just True) = do
+            td_ ! class_ "supported" ! title_ (ext <> "@" <> displayRelease release)
+                $ a_ ! href_ (getDocLink' ext release) $ "✓"
+        go ext release _ = do
+            td_ ! class_ "not-supported" ! title_ (ext <> "@" <> displayRelease release)
+                $ p_ "-"
         getDocLink' = getDocLink releasesMap docLinksMap
 
 getDocLink :: ReleasesMap -> DocLinksMap -> Text -> GHCRelease -> Text
