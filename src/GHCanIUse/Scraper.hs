@@ -1,24 +1,25 @@
+{-# LANGUAGE FlexibleContexts    #-}
 {-# LANGUAGE NoOverloadedStrings #-}
 
-module GHCanIUse.Scrapper
-    ( scrapGHCReleases
-    , scrapDoc
-    , scrapDocLatest)
+module GHCanIUse.Scraper
+    ( scrapeGHCReleases
+    , scrapeDoc
+    , scrapeDocLatest)
 where
 
 import           BasicPrelude       hiding (try, (<|>))
 import           Data.Text          (pack, unpack)
 import           Data.Time.Calendar (Day, fromGregorian)
-import           GHCanIUse.Utils
 import           GHCanIUse.Types
+import           GHCanIUse.Utils
 import           Text.HTML.Scalpel
 import           Text.Parsec
 -- import Data.List
 
 -- Releases
 
-scrapGHCReleases :: IO [GHCRelease]
-scrapGHCReleases = do
+scrapeGHCReleases :: IO [GHCRelease]
+scrapeGHCReleases = do
     allReleases <- fromMaybe [] <$> scrapeURL "https://www.haskell.org/ghc/" versionsScrapper
     return $ nub . catMaybes . fmap (uncurry parseGHCReleases) $ allReleases
 
@@ -71,18 +72,24 @@ parseGHCReleases date code = GHCRelease <$> parseReleaseDate date
 
 extensionIndexScrapper :: Scraper String [(String, String)]
 extensionIndexScrapper = fmap mconcat $ chroots "tbody" $ do
-    allCells <- texts $ "tr" // "td"
-    let [column1, column2] = transpose $ take 2 <$> splitEvery 4 allCells
-    return $ zip (drop 2 <$> column1) column2
+    allCells <- htmls $ "tr" // "td"
+    let [col1, col2] = transpose $ take 2 <$> splitEvery 4 allCells
+    return $ zip col1 col2
+    where listOf2ToPair [x,y] = (x,y)
 
 
 -- Docs
-scrapDoc (GHCRelease _ (x,y,z)) = scrapeURL url $ extensionIndexScrapper
-    where url = mconcat [ "https://downloads.haskell.org/~ghc/"
-                        , intercalate "." $ unpack.show <$> [x,y,z]
-                        , "/docs/html/users_guide/flag-reference.html" ]
 
-scrapDocLatest = scrapeURL url $ extensionIndexScrapper
+scrapeDoc r@(GHCRelease _ (x,y,z)) = do
+    cells <- scrapeURL (ghcFlagReferenceURL r)  extensionIndexScrapper
+    return $ pairOfMaybesToMaybeOfPairs . go <$> (fromMaybe [] cells)
+    where
+          go (col1, col2) = ( fmap (drop 2) <$> scrapeStringLike col1 $ text "code"
+                                  , scrapeStringLike col2 $ attr "href" $ "a" )
+          pairOfMaybesToMaybeOfPairs (Just x, Just y) = Just (x,y)
+          pairOfMaybesToMaybeOfPairs _ = Nothing
+
+scrapeDocLatest = scrapeURL url $ extensionIndexScrapper
     where url = mconcat [ "https://downloads.haskell.org/~ghc/"
                         , "latest"
                         , "/docs/html/users_guide/flag-reference.html" ]
