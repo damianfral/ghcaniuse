@@ -68,11 +68,19 @@ td:last-child
     padding-right: 8px;
 }
 
-.supported,
+.supported a,
 .not-supported
 {
     color: white;
 }
+
+.supported a
+{
+    display: flex;
+    justify-content: center;
+    text-decoration: none;
+}
+
 .supported
 {
     background-color: #39b54a;
