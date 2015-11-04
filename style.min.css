@@ -1,0 +1,7 @@
+html,body{font-family:'Roboto',sans-serif}*{box-sizing:border-box}table{width:100%}thead 
+h3{font-weight:600;text-transform:uppercase;font-size:14px;margin-bottom:8px}thead 
+td{cursor:pointer;padding-bottom:0}.arrows{font-size:20px;margin:0;color:#AAA}.sort-down 
+.down-arrow,.sort-up .up-arrow{color:#000}tbody{font-size:20px}tbody tr 
+td:nth-child(1){text-align:left;font-size:14px}td{padding:0;height:32px;width:10%}td 
+> h3,td > a,td > p{display:flex;justify-content:center;margin:0}.supported 
+a,.not-supported{color:#fff;text-decoration:none}.supported{background-color:#39b54a}.supported:hover{background-color:#129324}.not-supported{background-color:#c44230}
