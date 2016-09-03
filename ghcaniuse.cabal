@@ -18,7 +18,7 @@ cabal-version:       >=1.10
 library
     exposed-modules: GHCanIUse
     hs-source-dirs:   src
-    build-depends:       base >=4.8 && <4.9, basic-prelude, scalpel, lens, parsec, time, turtle, text, aeson, bytestring, unordered-containers, lucid, transformers
+    build-depends:       base >=4.8 && <4.10, basic-prelude, scalpel, lens, parsec, time, turtle, text, aeson >= 0.10, bytestring, unordered-containers, lucid, transformers
     default-language:    Haskell2010
     default-extensions:  NoImplicitPrelude, OverloadedStrings
 
@@ -26,7 +26,7 @@ executable ghcaniuse
   main-is:             Main.hs
   -- other-modules:
   -- other-extensions:
-  build-depends:       base >=4.8 && <4.9, basic-prelude, scalpel, lens, parsec, time, turtle, text, aeson, bytestring, unordered-containers, lucid, transformers
+  build-depends:       base >=4.8 && <4.10, basic-prelude, scalpel, lens, parsec, time, turtle, text, aeson >= 0.10, bytestring, unordered-containers, lucid, transformers
   hs-source-dirs:      src
   default-language:    Haskell2010
   ghc-options:         -Wall

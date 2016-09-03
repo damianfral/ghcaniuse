@@ -18,9 +18,6 @@ instance Eq GHCRelease where
     (GHCRelease _ (a,b,_)) == (GHCRelease _ (x,y,_)) = [a,b] == [x,y]
     _ == _ = False
 
-instance ToJSON Day where
-    toJSON = String . pack . showGregorian
-
 instance ToJSON GHCRelease
 
 instance Hashable Day where
