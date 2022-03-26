@@ -1,84 +1,90 @@
 {-# LANGUAGE FlexibleContexts #-}
-{-# LANGUAGE NoImplicitPrelude #-}
 {-# LANGUAGE OverloadedStrings #-}
+{-# LANGUAGE NoImplicitPrelude #-}
 
 module GHCanIUse.Render where
 
-import           BasicPrelude      hiding (lookup)
-import           Data.HashMap.Lazy hiding (filter, (!))
-import           Data.Text         (pack)
-import           GHCanIUse.Types
-import           GHCanIUse.Utils
-import           Lucid
-import           Lucid.Base
+import BasicPrelude hiding (lookup)
+import Data.HashMap.Lazy hiding (filter, (!))
+import Data.Text (pack)
+import GHCanIUse.Types
+import GHCanIUse.Utils
+import Lucid
+import Lucid.Base
 
 (!) :: With a => a -> Attribute -> a
 (!) a b = a `with` [b]
 
 displayRelease :: GHCRelease -> Text
-displayRelease (GHCRelease _ (x,y,_)) =  pack $ "GHC-" <> intercalate "." (show <$> [x,y])
+displayRelease (GHCRelease _ (x, y, _)) = pack $ "GHC-" <> intercalate "." (show <$> [x, y])
 
 displayReleaseHTML :: GHCRelease -> Html ()
 displayReleaseHTML release = do
-    h3_ $ toHtml $ displayRelease release
-    arrows
+  h3_ $ toHtml $ displayRelease release
+  arrows
 
 arrows :: Html ()
 arrows = p_ ! class_ "arrows" $ do
-             span_ ! class_ "down-arrow" $ "ꜜ"
-             span_ ! class_ "up-arrow"   $ "ꜛ"
+  span_ ! class_ "down-arrow" $ "ꜜ"
+  span_ ! class_ "up-arrow" $ "ꜛ"
 
 generateHTMLTable :: ReleasesMap -> DocLinksMap -> Html ()
 generateHTMLTable releasesMap docLinksMap = table_ ! id_ "ghc-extensions" $ do
-    thead_ $ tr_ $ do
-        td_ $ h3_ "extensions" >> arrows
-        mapM_ td_ $ displayReleaseHTML <$> allReleases
-    tbody_ $
-        forM_ allExtensions $ \extension ->
-            tr_ $ do
-                td_ $ toHtml extension
-                forM_ allReleases $ \release ->
-                    go extension release $ elem release <$> lookup extension releasesMap
-    where
-        allExtensions  = sort $ filterExtensions $ keys releasesMap
-        allReleases    = reverse $ sort $ nub $ mconcat $ snd <$> toList releasesMap
+  thead_ $
+    tr_ $ do
+      td_ $ h3_ "extensions" >> arrows
+      mapM_ td_ $ displayReleaseHTML <$> allReleases
+  tbody_ $
+    forM_ allExtensions $ \extension ->
+      tr_ $ do
+        td_ $ toHtml extension
+        forM_ allReleases $ \release ->
+          go extension release $ elem release <$> lookup extension releasesMap
+  where
+    allExtensions = sort $ filterExtensions $ keys releasesMap
+    allReleases = reverse $ sort $ nub $ mconcat $ snd <$> toList releasesMap
 
-        go ext release (Just True) = do
-            td_ ! class_ "supported" ! title_ (ext <> "@" <> displayRelease release)
-                $ a_ ! href_ (getDocLink' ext release) $ "✓"
-        go ext release _ = do
-            td_ ! class_ "not-supported" ! title_ (ext <> "@" <> displayRelease release)
-                $ p_ "-"
-        getDocLink' = getDocLink docLinksMap
+    go ext release (Just True) = do
+      td_ ! class_ "supported" ! title_ (ext <> "@" <> displayRelease release) $
+        a_ ! href_ (getDocLink' ext release) $ "✓"
+    go ext release _ = do
+      td_ ! class_ "not-supported" ! title_ (ext <> "@" <> displayRelease release) $
+        p_ "-"
+    getDocLink' = getDocLink docLinksMap
 
 getDocLink :: DocLinksMap -> Text -> GHCRelease -> Text
-getDocLink docLinksMap extension release = mconcat $ catMaybes
-    [ Just $ ghcUserGuideURL release
-    , pack . show <$> lookup (extension, release) docLinksMap ]
-
-
+getDocLink docLinksMap extension release =
+  mconcat $
+    catMaybes
+      [ Just $ ghcUserGuideURL release,
+        pack . show <$> lookup (extension, release) docLinksMap
+      ]
 
 generatePage :: Html () -> Html ()
 generatePage content = html_ $ do
-    head_ $ do
-        title_ "GHCanIUse"
-        style_' "https://fonts.googleapis.com/css?family=Roboto"
-        style_' "style.css"
-        script_ [type_ "text/javascript"]
-            ("(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)})(window,document,'script','//www.google-analytics.com/analytics.js','ga');ga('create', 'UA-42041306-4', 'auto');ga('send', 'pageview');"::Text)
+  head_ $ do
+    title_ "GHCanIUse"
+    style_' "https://fonts.googleapis.com/css?family=Roboto"
+    style_' "style.css"
+    script_
+      [type_ "text/javascript"]
+      ("(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)})(window,document,'script','//www.google-analytics.com/analytics.js','ga');ga('create', 'UA-42041306-4', 'auto');ga('send', 'pageview');" :: Text)
 
-    body_ $ do
-        content
-        script_' "tablesort.min.js"
-        script_ [type_ "text/javascript"]
-            ("new Tablesort(document.getElementById('ghc-extensions'));"::Text)
-
-    where
-        script_' :: Text -> Html ()
-        script_' x = makeElement "script" ! type_ "text/javascript" ! src_ x $ ""
-        style_' hrefV = link_   [ type_ "text/css"
-                                , rel_ "stylesheet"
-                                , href_ hrefV ]
+  body_ $ do
+    content
+    script_' "tablesort.min.js"
+    script_
+      [type_ "text/javascript"]
+      ("new Tablesort(document.getElementById('ghc-extensions'));" :: Text)
+  where
+    script_' :: Text -> Html ()
+    script_' x = makeElement "script" ! type_ "text/javascript" ! src_ x $ ""
+    style_' hrefV =
+      link_
+        [ type_ "text/css",
+          rel_ "stylesheet",
+          href_ hrefV
+        ]
 
 generateIndexPage :: ReleasesMap -> DocLinksMap -> Html ()
 generateIndexPage r d = generatePage $ generateHTMLTable r d
