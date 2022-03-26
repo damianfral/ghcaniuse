@@ -1,14 +1,16 @@
+{-# LANGUAGE OverloadedStrings #-}
+{-# LANGUAGE NoImplicitPrelude #-}
 module GHCanIUse.Utils where
 
 import           BasicPrelude    hiding (isPrefixOf)
-import           Data.Text       (index, isPrefixOf, pack, unpack)
+import           Data.Text       (index, isPrefixOf, pack)
 import           GHCanIUse.Types
 import           Turtle
 
 
 showNix :: GHCRelease -> Text
-showNix (GHCRelease _ (a,b,c)) =
-    "haskell.compiler.ghc" <> (mconcat $ show <$> [a,b,c])
+showNix (GHCRelease _ (a,b,c)) = pack $
+    "haskell.compiler.ghc" <> mconcat (show <$> [a,b,c])
 
 getLanguageExtensions :: GHCRelease -> IO [Text]
 getLanguageExtensions r = lines <$> shellOutput
@@ -30,11 +32,13 @@ filterExtensions = filter $ not . isNoExtension
 splitEvery :: Int -> [a] -> [[a]]
 splitEvery i = unfoldr go
     where go [] = Nothing
-          go x  = Just $ splitAt i x
+          go v  = Just $ splitAt i v
 
-ghcUserGuideURL (GHCRelease _ (x,y,z)) = mconcat
+ghcUserGuideURL :: GHCRelease -> Text
+ghcUserGuideURL (GHCRelease _ (major,minor,patch)) = mconcat
     [ "https://downloads.haskell.org/~ghc/"
-    , intercalate "." $ unpack.show <$> [x,y,z]
+    , intercalate "." $ pack.show <$> [major,minor,patch]
     , "/docs/html/users_guide/"]
 
+ghcFlagReferenceURL :: GHCRelease -> Text
 ghcFlagReferenceURL = (<> "flag-reference.html") . ghcUserGuideURL

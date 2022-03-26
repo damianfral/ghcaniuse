@@ -1,5 +1,6 @@
 {-# LANGUAGE FlexibleContexts    #-}
-{-# LANGUAGE NoOverloadedStrings #-}
+{-# LANGUAGE OverloadedStrings #-}
+{-# LANGUAGE NoImplicitPrelude #-}
 
 module GHCanIUse.Scraper
     ( scrapeGHCReleases
@@ -7,39 +8,38 @@ module GHCanIUse.Scraper
     , scrapeDocLatest)
 where
 
-import           BasicPrelude       hiding (try, (<|>))
+import           BasicPrelude       hiding ((<|>))
 import           Data.Text          (pack, unpack)
 import           Data.Time.Calendar (Day, fromGregorian)
 import           GHCanIUse.Types
 import           GHCanIUse.Utils
 import           Text.HTML.Scalpel
 import           Text.Parsec
--- import Data.List
 
 -- Releases
-
 scrapeGHCReleases :: IO [GHCRelease]
 scrapeGHCReleases = do
     allReleases <- fromMaybe [] <$> scrapeURL "https://www.haskell.org/ghc/" versionsScrapper
-    return $ nub . catMaybes . fmap (uncurry parseGHCReleases) $ allReleases
+    return $ nub . mapMaybe (uncurry parseGHCReleases) $ allReleases
 
 versionsScrapper :: Scraper String [(String, String)]
 versionsScrapper = chroot ("td" @: [hasClass "rightpane"] // "dl") $ do
-    r <- texts $ "dt"
-    v <- texts $ "dd"
+    r <- texts "dt"
+    v <- texts "dd"
     return $ zip r v
 
 numberParser :: Parser Int
 numberParser = many1 digit >>= \d -> return ((read $ pack d) :: Int)
 
 monthParser :: Parser Int
-monthParser = foldl1 (<|>) $  zipWith ((<*)) numbers months
+monthParser = foldl1 (<|>) $  zipWith (<*) numbers months
     where
     numbers = pure <$> [1..]
     months  = try . string <$>
         [ "January", "February", "March" , "April", "May", "June"
         , "July", "Agost", "September", "October", "November", "December" ]
 
+eitherToMaybe :: Either a1 a2 -> Maybe a2
 eitherToMaybe (Left _)  = Nothing
 eitherToMaybe (Right x) = Just x
 
@@ -48,9 +48,9 @@ parseReleaseDate = eitherToMaybe . runParser p () ""
     where
         p = do
             day   <- numberParser
-            string " "
+            void $ string " "
             month <- monthParser
-            string " "
+            void $ string " "
             year  <- numberParser
             return $ fromGregorian (fromIntegral year) month day
 
@@ -58,11 +58,11 @@ parseReleaseNumber :: String -> Maybe (Int, Int, Int)
 parseReleaseNumber = eitherToMaybe . runParser p () ""
     where
         p = do
-            string "GHC "
+            void $ string "GHC "
             a <- numberParser
-            string "."
+            void $ string "."
             b <- numberParser
-            string "."
+            void $ string "."
             c <- numberParser
             return (a,b,c)
 
@@ -80,16 +80,18 @@ extensionIndexScrapper = fmap mconcat $ chroots "tbody" $ do
 
 -- Docs
 
-scrapeDoc r@(GHCRelease _ (x,y,z)) = do
-    cells <- scrapeURL (ghcFlagReferenceURL r)  extensionIndexScrapper
-    return $ pairOfMaybesToMaybeOfPairs . go <$> (fromMaybe [] cells)
+scrapeDoc :: GHCRelease -> IO [Maybe ([Char], String)]
+scrapeDoc release = do
+    cells <- scrapeURL (unpack $ ghcFlagReferenceURL release)  extensionIndexScrapper
+    return $ pairOfMaybesToMaybeOfPairs . go <$> fromMaybe [] cells
     where
           go (col1, col2) = ( fmap (drop 2) <$> scrapeStringLike col1 $ text "code"
-                                  , scrapeStringLike col2 $ attr "href" $ "a" )
-          pairOfMaybesToMaybeOfPairs (Just x, Just y) = Just (x,y)
+                                  , scrapeStringLike col2 $ attr "href" "a" )
+          pairOfMaybesToMaybeOfPairs (Just a, Just b) = Just (a,b)
           pairOfMaybesToMaybeOfPairs _ = Nothing
 
-scrapeDocLatest = scrapeURL url $ extensionIndexScrapper
+scrapeDocLatest :: IO (Maybe [(String, String)])
+scrapeDocLatest = scrapeURL url extensionIndexScrapper
     where url = mconcat [ "https://downloads.haskell.org/~ghc/"
                         , "latest"
                         , "/docs/html/users_guide/flag-reference.html" ]

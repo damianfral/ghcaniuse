@@ -1,26 +1,29 @@
 {-# LANGUAGE FlexibleContexts #-}
+{-# LANGUAGE NoImplicitPrelude #-}
+{-# LANGUAGE OverloadedStrings #-}
 
 module GHCanIUse.Render where
 
 import           BasicPrelude      hiding (lookup)
 import           Data.HashMap.Lazy hiding (filter, (!))
-import qualified Data.HashMap.Lazy as M
-import           Data.Text         (pack, unpack)
+import           Data.Text         (pack)
 import           GHCanIUse.Types
 import           GHCanIUse.Utils
 import           Lucid
 import           Lucid.Base
 
+(!) :: With a => a -> Attribute -> a
 (!) a b = a `with` [b]
 
 displayRelease :: GHCRelease -> Text
-displayRelease (GHCRelease d (x,y,z)) = "GHC-" <> intercalate "." (show <$> [x,y])
+displayRelease (GHCRelease _ (x,y,_)) =  pack $ "GHC-" <> intercalate "." (show <$> [x,y])
 
 displayReleaseHTML :: GHCRelease -> Html ()
 displayReleaseHTML release = do
     h3_ $ toHtml $ displayRelease release
     arrows
 
+arrows :: Html ()
 arrows = p_ ! class_ "arrows" $ do
              span_ ! class_ "down-arrow" $ "ꜜ"
              span_ ! class_ "up-arrow"   $ "ꜛ"
@@ -39,7 +42,6 @@ generateHTMLTable releasesMap docLinksMap = table_ ! id_ "ghc-extensions" $ do
     where
         allExtensions  = sort $ filterExtensions $ keys releasesMap
         allReleases    = reverse $ sort $ nub $ mconcat $ snd <$> toList releasesMap
-        latestRelease = maximum allReleases
 
         go ext release (Just True) = do
             td_ ! class_ "supported" ! title_ (ext <> "@" <> displayRelease release)
@@ -47,19 +49,19 @@ generateHTMLTable releasesMap docLinksMap = table_ ! id_ "ghc-extensions" $ do
         go ext release _ = do
             td_ ! class_ "not-supported" ! title_ (ext <> "@" <> displayRelease release)
                 $ p_ "-"
-        getDocLink' = getDocLink releasesMap docLinksMap
+        getDocLink' = getDocLink docLinksMap
 
-getDocLink :: ReleasesMap -> DocLinksMap -> Text -> GHCRelease -> Text
-getDocLink releasesMap docLinksMap extension release = pack . mconcat $ catMaybes
+getDocLink :: DocLinksMap -> Text -> GHCRelease -> Text
+getDocLink docLinksMap extension release = mconcat $ catMaybes
     [ Just $ ghcUserGuideURL release
-    , lookup (extension, release) docLinksMap ]
+    , pack . show <$> lookup (extension, release) docLinksMap ]
 
 
 
 generatePage :: Html () -> Html ()
 generatePage content = html_ $ do
     head_ $ do
-        title_   $ "GHCanIUse"
+        title_ "GHCanIUse"
         style_' "https://fonts.googleapis.com/css?family=Roboto"
         style_' "style.css"
         script_ [type_ "text/javascript"]
@@ -78,6 +80,7 @@ generatePage content = html_ $ do
                                 , rel_ "stylesheet"
                                 , href_ hrefV ]
 
+generateIndexPage :: ReleasesMap -> DocLinksMap -> Html ()
 generateIndexPage r d = generatePage $ generateHTMLTable r d
 
 -- generateExtensionPage :: Text -> ReleasesMap -> DocLinksMap -> Html ()
