@@ -1,6 +1,6 @@
 cabal-version: 1.12
 
--- This file has been generated from package.yaml by hpack version 0.34.5.
+-- This file has been generated from package.yaml by hpack version 0.35.2.
 --
 -- see: https://github.com/sol/hpack
 
@@ -12,56 +12,84 @@ extra-source-files:
 
 library
   exposed-modules:
-      GHCanIUse
+      GHCanIUse.CLI
       GHCanIUse.Render
       GHCanIUse.Scraper
       GHCanIUse.Types
-      GHCanIUse.Utils
       Main
   other-modules:
       Paths_ghcaniuse
   hs-source-dirs:
       ./src/
+  ghc-options: -fwrite-ide-info -Wall -Wincomplete-uni-patterns -Wincomplete-record-updates -Wpartial-fields -Widentities -Wredundant-constraints -Wcpp-undef -Wunused-packages
   build-depends:
-      aeson
-    , base
-    , basic-prelude
+      base
     , bytestring
-    , lens
+    , casing
+    , containers
+    , directory
+    , file-embed
+    , filepath
     , lucid
-    , parsec
+    , modern-uri
+    , optparse-generic
+    , relude
     , scalpel
     , text
-    , time
-    , transformers
-    , turtle
-    , unordered-containers
   default-language: Haskell2010
 
-executable feeld-backend
+executable ghcaniuse
   main-is: Main.hs
   other-modules:
-      GHCanIUse
+      GHCanIUse.CLI
       GHCanIUse.Render
       GHCanIUse.Scraper
       GHCanIUse.Types
-      GHCanIUse.Utils
       Paths_ghcaniuse
   hs-source-dirs:
       ./src/
-  ghc-options: -rtsopts -threaded -with-rtsopts=-N
+  ghc-options: -fwrite-ide-info -Wall -Wincomplete-uni-patterns -Wincomplete-record-updates -Wpartial-fields -Widentities -Wredundant-constraints -Wcpp-undef -Wunused-packages -rtsopts -threaded -with-rtsopts=-N
   build-depends:
-      aeson
-    , base
-    , basic-prelude
+      base
     , bytestring
-    , lens
+    , casing
+    , containers
+    , directory
+    , file-embed
+    , filepath
     , lucid
-    , parsec
+    , modern-uri
+    , optparse-generic
+    , relude
     , scalpel
     , text
-    , time
-    , transformers
-    , turtle
-    , unordered-containers
+  default-language: Haskell2010
+
+test-suite ghcaniuse-test
+  type: exitcode-stdio-1.0
+  main-is: Spec.hs
+  other-modules:
+      GHCanIUseSpec
+      Paths_ghcaniuse
+  hs-source-dirs:
+      test
+  ghc-options: -fwrite-ide-info -Wall -Wincomplete-uni-patterns -Wincomplete-record-updates -Wpartial-fields -Widentities -Wredundant-constraints -Wcpp-undef -Wunused-packages -rtsopts -threaded -with-rtsopts=-N -O2
+  build-depends:
+      base
+    , bytestring
+    , casing
+    , containers
+    , directory
+    , file-embed
+    , filepath
+    , ghcaniuse
+    , lucid
+    , modern-uri
+    , optparse-generic
+    , relude
+    , req
+    , scalpel
+    , sydtest
+    , sydtest-discover
+    , text
   default-language: Haskell2010

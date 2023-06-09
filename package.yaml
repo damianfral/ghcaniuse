@@ -6,27 +6,52 @@ extra-source-files:
 
 dependencies:
 - base
-- basic-prelude
-- scalpel
-- lens
-- parsec
-- time
-- turtle
-- text
-- aeson
 - bytestring
-- unordered-containers
+- casing
+- containers
+- directory
+- file-embed
+- filepath
 - lucid
-- transformers
+- modern-uri
+- optparse-generic
+- relude
+- scalpel
+- text
 
+ghc-options:
+  - -fwrite-ide-info
+  - -Wall
+  - -Wincomplete-uni-patterns
+  - -Wincomplete-record-updates
+  - -Wpartial-fields
+  - -Widentities
+  - -Wredundant-constraints
+  - -Wcpp-undef
+  - -Wunused-packages
 library:
   source-dirs: ./src/
 
 executables:
-  feeld-backend:
+  ghcaniuse:
     main: Main.hs
     source-dirs: ./src/
     ghc-options:
     - -rtsopts
     - -threaded
     - -with-rtsopts=-N
+
+tests:
+  ghcaniuse-test:
+    main: Spec.hs
+    source-dirs: test
+    ghc-options:
+      - -rtsopts
+      - -threaded
+      - -with-rtsopts=-N
+      - -O2
+    dependencies:
+      - req
+      - sydtest
+      - sydtest-discover
+      - ghcaniuse
