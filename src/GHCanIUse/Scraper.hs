@@ -3,7 +3,7 @@
 
 module GHCanIUse.Scraper where
 
-import Control.Concurrent.Async (forConcurrently_)
+import Control.Concurrent.ParallelIO (parallelInterleaved)
 import qualified Data.Map as Map
 import qualified Data.Set as Set
 import Data.Text hiding (filter)
@@ -62,14 +62,15 @@ rootOf url
 dropEnd' :: Int -> [a] -> [a]
 dropEnd' n = Relude.reverse . Relude.drop n . Relude.reverse
 
-getAllDocURLsIO :: URI -> IO (Set URI)
-getAllDocURLsIO url = do
+-- | Get all URLs recursively from a given URL.
+getAllDocURLs :: URI -> IO (Set URI)
+getAllDocURLs url = do
   tvar <- newTVarIO mempty
-  getAllURLs tvar url
+  getAllDocURLs' tvar url
   readTVarIO tvar
 
-getAllURLs :: TVar (Set URI) -> URI -> IO ()
-getAllURLs tvar url
+getAllDocURLs' :: TVar (Set URI) -> URI -> IO ()
+getAllDocURLs' tvar url
   | urlText /= trimHash urlText = pure ()
   | otherwise = do
       scrappedURLS <- S.scrapeURL (unpack urlText) scrapeAllURLs
@@ -81,7 +82,7 @@ getAllURLs tvar url
           let newUrls = Set.difference validUrls registeredURLs
           mapM_ (putStrLn . unpack . render) newUrls
           atomically $ modifyTVar' tvar $ mappend newUrls
-          forConcurrently_ newUrls $ getAllURLs tvar
+          void $ parallelInterleaved $ getAllDocURLs' tvar <$> Set.toList newUrls
   where
     trimHash = fst . T.breakOn "#"
     urlText = render url

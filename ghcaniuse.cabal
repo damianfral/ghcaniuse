@@ -36,6 +36,7 @@ library
     , lucid
     , modern-uri
     , optparse-generic
+    , parallel-io
     , relude
     , scalpel
     , text
@@ -63,6 +64,7 @@ executable ghcaniuse
     , lucid
     , modern-uri
     , optparse-generic
+    , parallel-io
     , relude
     , scalpel
     , text
@@ -89,6 +91,7 @@ test-suite ghcaniuse-test
     , lucid
     , modern-uri
     , optparse-generic
+    , parallel-io
     , relude
     , req
     , scalpel

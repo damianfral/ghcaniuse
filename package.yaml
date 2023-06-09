@@ -15,6 +15,7 @@ dependencies:
 - lucid
 - modern-uri
 - optparse-generic
+- parallel-io
 - relude
 - scalpel
 - text

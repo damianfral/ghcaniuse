@@ -25,6 +25,7 @@ import System.Directory hiding (makeAbsolute)
 import System.FilePath ((</>))
 import Text.URI
 import Text.URI.QQ (uri)
+import Control.Concurrent.ParallelIO (stopGlobalPool)
 
 data Options w = Options
   { directory :: w ::: FilePath <!> "./result/",
@@ -39,6 +40,7 @@ runCLI :: IO ()
 runCLI = do
   options <- unwrapRecord "GHCanIUse"
   releases <- getGHCReleases options
+  stopGlobalPool
   renderToFile "index.html" $ generatePage $ ghcReleasesToExtensionsMap releases
 
 --------------------------------------------------------------------------------
@@ -54,7 +56,7 @@ processVersion :: Options Unwrapped -> GHCVersion -> IO (Set GHCRelease)
 processVersion Options {..} version = do
   let fp = getFilePath version
   languages <- getLanguagesFromFile fp
-  urls <- if noDocs then mempty else getAllDocURLsIO $ ghcUserGuideURL version
+  urls <- if noDocs then mempty else getAllDocURLs $ ghcUserGuideURL version
   let languageDocs = scrapeGHCExtensionsDoc version languages urls
   -- Log
   mapM_ logEntry (Map.toList $ unLanguageExtensionsDocs languageDocs)
