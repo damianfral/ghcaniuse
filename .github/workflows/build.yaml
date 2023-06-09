@@ -1,0 +1,29 @@
+name: build-project
+on: push
+#
+jobs:
+  build-package:
+    runs-on: ubuntu-latest
+    steps:
+      - name: checkout
+        uses: actions/checkout@v3
+      - name: install nix
+        uses: cachix/install-nix-action@v20
+      - uses: cachix/cachix-action@v12
+        with:
+          name: opensource
+          authToken: '${{ secrets.CACHIX_AUTH_TOKEN }}'
+      - run: nix build --accept-flake-config --option sandbox false
+
+  build-dev-shell:
+    runs-on: ubuntu-latest
+    steps:
+      - name: checkout
+        uses: actions/checkout@v3
+      - name: install nix
+        uses: cachix/install-nix-action@v20
+      - uses: cachix/cachix-action@v12
+        with:
+          name: opensource
+          authToken: '${{ secrets.CACHIX_AUTH_TOKEN }}'
+      - run: nix build .#devShells.x86_64-linux.default --accept-flake-config
