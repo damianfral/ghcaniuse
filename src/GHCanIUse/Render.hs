@@ -26,7 +26,7 @@ displayReleaseHTML :: GHCRelease -> Html ()
 displayReleaseHTML release = flexRow $ h4_ [class_ "ttl"] link >> arrows
   where
     href = render $ releaseWeb release
-    link = a_ [href_ href, class_ "black"] (toHtml $ displayRelease release)
+    link = a_ [href_ href, class_ "black"] $ toHtml $ displayRelease release
 
 arrows :: Html ()
 arrows = p_ [class_ "arrows tc f3 pl2"] do

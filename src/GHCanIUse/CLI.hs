@@ -10,6 +10,7 @@
 
 module GHCanIUse.CLI where
 
+import Control.Concurrent.ParallelIO (stopGlobalPool)
 import qualified Data.ByteString as BS
 import qualified Data.Map as Map
 import qualified Data.Set as Set
@@ -27,12 +28,9 @@ import System.Directory hiding (makeAbsolute)
 import System.FilePath ((</>))
 import Text.URI
 import Text.URI.QQ (uri)
-import Control.Concurrent.ParallelIO (stopGlobalPool)
 
 data Options w = Options
-  { directory :: w ::: FilePath <!> "./result/",
-    noDocs :: w ::: Bool
-  }
+  {directory :: w ::: FilePath <!> "./result/", noDocs :: w ::: Bool}
   deriving (Generic)
 
 instance ParseRecord (Options Wrapped) where
@@ -57,19 +55,19 @@ getGHCReleasesFor releases dir =
   foldMap (processVersion dir) (Set.toList releases)
 
 processVersion :: Options Unwrapped -> GHCVersion -> IO (Set GHCRelease)
-processVersion Options {..} version = do
-  let fp = getFilePath version
+processVersion Options {..} ghcVersion = do
+  let fp = getFilePath ghcVersion
   languages <- getLanguagesFromFile fp
-  urls <- if noDocs then mempty else getAllDocURLs $ ghcUserGuideURL version
-  let languageDocs = scrapeGHCExtensionsDoc version languages urls
+  urls <- if noDocs then mempty else getAllDocURLs $ ghcUserGuideURL ghcVersion
+  let languageDocs = scrapeGHCExtensionsDoc ghcVersion languages urls
   -- Log
   mapM_ logEntry (Map.toList $ unLanguageExtensionsDocs languageDocs)
-  pure $ Set.singleton $ makeGHCRelease version languageDocs
+  pure $ Set.singleton $ makeGHCRelease ghcVersion languageDocs
   where
     getFilePath = (directory </>) . unpack . getLanguagesFileName
-    logEntry (extension, url) =
+    logEntry (ext, url) =
       putStrLn . unpack $
-        displayLangAtVersion extension version <> " -> " <> maybe "" render url
+        displayLangAtVersion ext ghcVersion <> " -> " <> maybe "" render url
 
 getLanguagesFromFile :: FilePath -> IO (Set LanguageExtension)
 getLanguagesFromFile fp = do
@@ -82,8 +80,7 @@ getLanguagesFromFile fp = do
     else pure mempty
 
 getLanguagesFileName :: GHCVersion -> Text
-getLanguagesFileName version =
-  T.toLower $ fold [displayVersion version, "-languages.txt"]
+getLanguagesFileName v = T.toLower $ fold [displayVersion v, "-languages.txt"]
 
 makeGHCRelease :: GHCVersion -> LanguageExtensionsDocs -> GHCRelease
 makeGHCRelease releaseVersion releaseLanguages =
@@ -113,6 +110,6 @@ ghcUserGuideURL v@(GHCVersion {..}) =
     usersGuidePath = mkPathPiece "users_guide"
     baseURI = [uri|https://downloads.haskell.org/|]
     pathsNE =
-      if v <= GHCVersion 9 2 4
+      if v < GHCVersion 9 4 0
         then ghcPath :| [versionPath, docsPath, htmlPath, usersGuidePath]
         else ghcPath :| [versionPath, docsPath, usersGuidePath]
