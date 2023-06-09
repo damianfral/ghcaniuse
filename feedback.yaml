@@ -1,0 +1,5 @@
+loops:
+  test:
+    command: cabal test
+  render:
+    command: cabal build && (nix build .#ghc-language-extensions --print-out-paths | xargs ./dist-newstyle/build/x86_64-linux/ghc-9.2.7/ghcaniuse-0.0.0.0/x/ghcaniuse/build/ghcaniuse/ghcaniuse --no-docs --directory ) && xdg-open index.html
