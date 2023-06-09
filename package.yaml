@@ -1,0 +1,32 @@
+name: ghcaniuse
+version: 0.0.0.0
+
+extra-source-files:
+- ./ghc-extensions.json
+
+dependencies:
+- base
+- basic-prelude
+- scalpel
+- lens
+- parsec
+- time
+- turtle
+- text
+- aeson
+- bytestring
+- unordered-containers
+- lucid
+- transformers
+
+library:
+  source-dirs: ./src/
+
+executables:
+  feeld-backend:
+    main: Main.hs
+    source-dirs: ./src/
+    ghc-options:
+    - -rtsopts
+    - -threaded
+    - -with-rtsopts=-N
