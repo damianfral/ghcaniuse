@@ -11,6 +11,8 @@
     nix-filter.url = "github:numtide/nix-filter";
     # needed for systest
     safe-coloured-text.url = "github:NorfairKing/safe-coloured-text";
+    pre-commit-hooks.url = "github:cachix/pre-commit-hooks.nix";
+    pre-commit-hooks.inputs.nixpkgs.follows = "nixpkgs";
   };
 
   outputs = { self, flake-utils, ... }@inputs:
@@ -84,9 +86,23 @@
             "ghc-9.4.5" = pkgs2305.haskell.compiler.ghc945;
             "ghc-9.6.2" = pkgs2305.haskell.compiler.ghc962;
           };
+          precommitCheck = inputs.pre-commit-hooks.lib.${system}.run {
+            src = ./.;
+            hooks = {
+              actionlint.enable = true;
+              hlint.enable = true;
+              hpack.enable = true;
+              markdownlint.enable = true;
+              nil.enable = true;
+              nixpkgs-fmt.enable = true;
+              ormolu.enable = true;
+              statix.enable = true;
+            };
+          };
         in
         rec {
           packages = {
+            inherit (pkgs.haskellPackages) ghcaniuse;
             ghc-language-extensions = pkgs.symlinkJoin {
               name = "ghc-language-extensions";
               paths = builtins.attrValues (
@@ -94,7 +110,6 @@
                   ghcs
               );
             };
-            ghcaniuse = pkgs.haskellPackages.ghcaniuse;
             ghcaniuse-web = pkgs.stdenv.mkDerivation {
               name = "ghcaniuse-web";
               phases = [ "buildPhase" "installPhase" ];
@@ -134,6 +149,7 @@
                 haskellPackages.implicit-hie
                 haskell-language-server
               ];
+              inherit (precommitCheck) shellHook;
             };
           };
         });
