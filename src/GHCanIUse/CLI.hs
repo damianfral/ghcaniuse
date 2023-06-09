@@ -15,11 +15,13 @@ import qualified Data.Map as Map
 import qualified Data.Set as Set
 import Data.Text (pack, unpack)
 import qualified Data.Text as T
+import Data.Version (showVersion)
 import GHCanIUse.Render (fromUtf8BS, generatePage)
 import GHCanIUse.Scraper
 import GHCanIUse.Types as G
 import Lucid
 import Options.Generic
+import qualified Paths_ghcaniuse as GHCanIUse
 import Relude
 import System.Directory hiding (makeAbsolute)
 import System.FilePath ((</>))
@@ -38,7 +40,9 @@ instance ParseRecord (Options Wrapped) where
 
 runCLI :: IO ()
 runCLI = do
-  options <- unwrapRecord "GHCanIUse"
+  options <-
+    unwrapRecord $
+      unwords ["GHCanIUse", "v" <> pack (showVersion GHCanIUse.version)]
   releases <- getGHCReleases options
   stopGlobalPool
   renderToFile "index.html" $ generatePage $ ghcReleasesToExtensionsMap releases

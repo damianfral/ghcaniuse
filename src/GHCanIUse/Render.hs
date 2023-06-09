@@ -9,8 +9,10 @@ module GHCanIUse.Render where
 import Data.FileEmbed
 import qualified Data.Map as M
 import qualified Data.Set as Set
+import Data.Version (showVersion)
 import GHCanIUse.Types
 import Lucid
+import qualified Paths_ghcaniuse as GHCanIUse
 import Relude
 import Text.URI (render)
 
@@ -102,13 +104,17 @@ template content = doctypehtml_ do
         [name_ "description", content_ description]
       ]
     style_' hrefV = link_ [type_ "text/css", rel_ "stylesheet", href_ hrefV]
-    header = header_ [class_ "bg-white"]
-      $ a_
-        ! title_ "ghcaniuse github repo"
-        ! href_ "https://github.com/damianfral/ghcaniuse"
-      $ div_ [class_ "flex items-center pa4 bg-white black"] do
-        img_ [src_ githubSVG, class_ "mr2 bg-white", alt_ "github logo" ]
-        p_ ! class_ "ma0" $ "damianfral/ghcaniuse"
+    header = header_
+      [class_ "bg-white flex flex-row justify-stretch items-center"]
+      $ do
+        a_
+          ! title_ "ghcaniuse github repo"
+          ! href_ "https://github.com/damianfral/ghcaniuse"
+          $ div_ [class_ "flex items-center pa4 bg-white black"] do
+            img_ [src_ githubSVG, class_ "mr2 bg-white", alt_ "github logo"]
+            p_ ! class_ "ma0" $ "damianfral/ghcaniuse"
+        p_ ! class_ "mr4 tr flex-auto white" $ do
+          toHtml $ "v" <> showVersion GHCanIUse.version
 
 generatePage :: LanguageExtensionsMap -> Html ()
 generatePage = template . generateHTMLTable
