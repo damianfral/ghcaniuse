@@ -15,7 +15,7 @@ main :: IO ()
 main = do
     scrapeGHCReleases
         >>= (flip execStateT mempty . mapM_ processRelease)
-        >>= renderToFile "public/index.html" . (uncurry generateIndexPage)
+        >>= renderToFile "public/index.html" . uncurry generateIndexPage
             -- forM_ (keys x) $ \ext ->
             --     renderToFile (unpack ("public/" <> ext <> ".html"))
             --                  (generateExtensionPage ext x y)

@@ -1,4 +1,6 @@
 {-# LANGUAGE FlexibleContexts #-}
+{-# LANGUAGE NoImplicitPrelude #-}
+{-# LANGUAGE OverloadedStrings #-}
 
 module GHCanIUse.Render where
 
@@ -14,7 +16,7 @@ import           Lucid.Base
 (!) a b = a `with` [b]
 
 displayRelease :: GHCRelease -> Text
-displayRelease (GHCRelease d (x,y,z)) = "GHC-" <> intercalate "." (show <$> [x,y])
+displayRelease (GHCRelease d (x,y,z)) = pack $ "GHC-" <> intercalate "." (show <$> [x,y])
 
 displayReleaseHTML :: GHCRelease -> Html ()
 displayReleaseHTML release = do
@@ -50,16 +52,16 @@ generateHTMLTable releasesMap docLinksMap = table_ ! id_ "ghc-extensions" $ do
         getDocLink' = getDocLink releasesMap docLinksMap
 
 getDocLink :: ReleasesMap -> DocLinksMap -> Text -> GHCRelease -> Text
-getDocLink releasesMap docLinksMap extension release = pack . mconcat $ catMaybes
+getDocLink releasesMap docLinksMap extension release = mconcat $ catMaybes
     [ Just $ ghcUserGuideURL release
-    , lookup (extension, release) docLinksMap ]
+    , pack <$> lookup (extension, release) docLinksMap ]
 
 
 
 generatePage :: Html () -> Html ()
 generatePage content = html_ $ do
     head_ $ do
-        title_   $ "GHCanIUse"
+        title_ "GHCanIUse"
         style_' "https://fonts.googleapis.com/css?family=Roboto"
         style_' "style.css"
         script_ [type_ "text/javascript"]
