@@ -10,7 +10,6 @@
     flake-utils = { url = "github:numtide/flake-utils"; };
     nix-filter.url = "github:numtide/nix-filter";
     # needed for systest
-    safe-coloured-text.url = "github:NorfairKing/safe-coloured-text";
     pre-commit-hooks.url = "github:cachix/pre-commit-hooks.nix";
     pre-commit-hooks.inputs.nixpkgs.follows = "nixpkgs";
   };
@@ -24,7 +23,6 @@
           overlays = [
             self.overlays.default
             inputs.nix-filter.overlays.default
-            inputs.safe-coloured-text.overlays.${system}
           ];
         };
       src = inputs.nix-filter.lib {
