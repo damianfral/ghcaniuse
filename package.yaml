@@ -52,6 +52,7 @@ tests:
       - -with-rtsopts=-N
       - -O2
     dependencies:
+      - async
       - req
       - sydtest
       - sydtest-discover

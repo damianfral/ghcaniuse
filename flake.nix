@@ -31,6 +31,7 @@
         root = ./.;
         include = [
           "src"
+          "test"
           "assets"
           "package.yaml"
         ];

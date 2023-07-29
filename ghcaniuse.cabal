@@ -80,7 +80,8 @@ test-suite ghcaniuse-test
       test
   ghc-options: -fwrite-ide-info -Wall -Wincomplete-uni-patterns -Wincomplete-record-updates -Wpartial-fields -Widentities -Wredundant-constraints -Wcpp-undef -Wunused-packages -rtsopts -threaded -with-rtsopts=-N -O2
   build-depends:
-      base
+      async
+    , base
     , bytestring
     , casing
     , containers

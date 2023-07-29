@@ -3,16 +3,17 @@
 
 module GHCanIUseSpec where
 
-import Control.Concurrent.Async (forConcurrently_)
 import qualified Data.Map as Map
 import qualified Data.Set as Set
 import Data.Text (unpack)
-import GHCanIUse
+import GHCanIUse.CLI
 import GHCanIUse.Types
 import Network.HTTP.Req
 import Relude
 import Test.Syd
 import Text.URI
+import Options.Generic (Unwrapped)
+import Control.Concurrent.ParallelIO (parallelInterleaved)
 
 checkURLDocExists :: URI -> IO ()
 checkURLDocExists url' = do
@@ -25,7 +26,10 @@ checkURLDocExists url' = do
       responseStatusCode response `shouldBe` 200
 
 dir :: FilePath
-dir = "/nix/store/mdl1y1jfmjrvflccks4j30xb4xdrir1w-ghc-language-extensions"
+dir = "/nix/store/ar26ijy4qmgz8s6fnjfdcy9kyaf4r9ka-ghc-language-extensions"
+
+options :: Options Unwrapped
+options = Options dir False
 
 versions :: [GHCVersion]
 versions = [GHCVersion 7 10 3, GHCVersion 8 2 2, GHCVersion 9 2 2]
@@ -34,11 +38,11 @@ spec :: Spec
 spec =
   describe "getGHCReleasesFor" $ forM_ versions $ \v -> do
     it ("produces valid URLS for version" <> show v) $ do
-      releases <- liftIO $ getGHCReleasesFor (Set.fromList [v]) dir
+      releases <- liftIO $ getGHCReleasesFor (Set.fromList [v]) options
       case Set.toList releases of
         [release] -> do
           let docs = releaseLanguages release
           let urls = catMaybes $ Map.elems $ unLanguageExtensionsDocs docs
-          forConcurrently_ urls checkURLDocExists
+          void $ liftIO $ parallelInterleaved $  checkURLDocExists <$>   urls       
         [] -> expectationFailure $ "Couldn't process " <> show v
         _ -> expectationFailure "Produced mored releases than 1"
