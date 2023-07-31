@@ -5,7 +5,6 @@
     nixpkgs = { url = "github:NixOS/nixpkgs"; };
     nixpkgs-1803 = { url = "github:NixOS/nixpkgs/release-18.03"; flake = false; };
     nixpkgs-2003 = { url = "github:NixOS/nixpkgs/release-20.03"; };
-    nixpkgs-2211 = { url = "github:NixOS/nixpkgs/release-22.11"; };
     nixpkgs-2305 = { url = "github:NixOS/nixpkgs/release-23.05"; };
     flake-utils = { url = "github:numtide/flake-utils"; };
     nix-filter.url = "github:numtide/nix-filter";
@@ -58,7 +57,6 @@
 
           pkgs1803 = pkgsFor inputs.nixpkgs-1803 system;
           pkgs2003 = pkgsFor inputs.nixpkgs-2003 system;
-          pkgs2211 = pkgsFor inputs.nixpkgs-2211 system;
           pkgs2305 = pkgsFor inputs.nixpkgs-2305 system;
           mkDerivationLanguageExtensions = name: ghc:
             pkgs.stdenv.mkDerivation {
@@ -69,15 +67,15 @@
               installPhase = "mkdir -p $out; cp ${name}-languages.txt $out";
             };
           ghcs = {
-            "ghc-7.0.4" = pkgs1803.haskell.compiler.ghc704Binary;
-            "ghc-7.4.2" = pkgs1803.haskell.compiler.ghc742Binary;
+            "ghc-7.0.4" = pkgs1803.haskell.compiler.ghc704;
+            "ghc-7.4.2" = pkgs1803.haskell.compiler.ghc742;
             "ghc-7.6.3" = pkgs1803.haskell.compiler.ghc763;
-            "ghc-7.8.4" = pkgs1803.haskell.compiler.ghc784Binary;
-            "ghc-7.10.3" = pkgs1803.haskell.compiler.ghc7103Binary;
+            "ghc-7.8.4" = pkgs1803.haskell.compiler.ghc784;
+            "ghc-7.10.3" = pkgs1803.haskell.compiler.ghc7103;
             "ghc-8.0.2" = pkgs1803.haskell.compiler.ghc802;
-            "ghc-8.2.2" = pkgs2003.haskell.compiler.ghc822Binary;
+            "ghc-8.2.2" = pkgs1803.haskell.compiler.ghc822;
             "ghc-8.4.4" = pkgs2003.haskell.compiler.ghc844;
-            "ghc-8.6.5" = pkgs2211.haskell.compiler.ghc865Binary;
+            "ghc-8.6.5" = pkgs2003.haskell.compiler.ghc865;
             "ghc-8.8.4" = pkgs2305.haskell.compiler.ghc884;
             "ghc-8.10.7" = pkgs2305.haskell.compiler.ghc8107;
             "ghc-9.0.2" = pkgs2305.haskell.compiler.ghc902;

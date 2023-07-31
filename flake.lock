@@ -133,22 +133,6 @@
         "type": "github"
       }
     },
-    "nixpkgs-2211": {
-      "locked": {
-        "lastModified": 1685758009,
-        "narHash": "sha256-IT4Z5WGhafrq+xbDTyuKrRPRQ1f+kVOtE+4JU1CHFeo=",
-        "owner": "NixOS",
-        "repo": "nixpkgs",
-        "rev": "eaf03591711b46d21abc7082a8ebee4681f9dbeb",
-        "type": "github"
-      },
-      "original": {
-        "owner": "NixOS",
-        "ref": "release-22.11",
-        "repo": "nixpkgs",
-        "type": "github"
-      }
-    },
     "nixpkgs-2305": {
       "locked": {
         "lastModified": 1685801374,
@@ -212,7 +196,6 @@
         "nixpkgs": "nixpkgs",
         "nixpkgs-1803": "nixpkgs-1803",
         "nixpkgs-2003": "nixpkgs-2003",
-        "nixpkgs-2211": "nixpkgs-2211",
         "nixpkgs-2305": "nixpkgs-2305",
         "pre-commit-hooks": "pre-commit-hooks"
       }
