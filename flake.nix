@@ -8,7 +8,6 @@
     nixpkgs-2305 = { url = "github:NixOS/nixpkgs/release-23.05"; };
     flake-utils = { url = "github:numtide/flake-utils"; };
     nix-filter.url = "github:numtide/nix-filter";
-    # needed for systest
     pre-commit-hooks.url = "github:cachix/pre-commit-hooks.nix";
     pre-commit-hooks.inputs.nixpkgs.follows = "nixpkgs";
   };
@@ -82,6 +81,7 @@
             "ghc-9.2.6" = pkgs2305.haskell.compiler.ghc926;
             "ghc-9.4.5" = pkgs2305.haskell.compiler.ghc945;
             "ghc-9.6.2" = pkgs2305.haskell.compiler.ghc962;
+            "ghc-9.8.1" = pkgs.haskell.compiler.ghc981;
           };
           precommitCheck = inputs.pre-commit-hooks.lib.${system}.run {
             src = ./.;
