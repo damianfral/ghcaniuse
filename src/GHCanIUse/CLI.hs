@@ -39,8 +39,8 @@ instance ParseRecord (Options Wrapped) where
 runCLI :: IO ()
 runCLI = do
   options <-
-    unwrapRecord $
-      unwords ["GHCanIUse", "v" <> pack (showVersion GHCanIUse.version)]
+    unwrapRecord
+      $ unwords ["GHCanIUse", "v" <> pack (showVersion GHCanIUse.version)]
   releases <- getGHCReleases options
   stopGlobalPool
   renderToFile "index.html" $ generatePage $ ghcReleasesToExtensionsMap releases
@@ -66,8 +66,11 @@ processVersion Options {..} ghcVersion = do
   where
     getFilePath = (directory </>) . unpack . getLanguagesFileName
     logEntry (ext, url) =
-      putStrLn . unpack $
-        displayLangAtVersion ext ghcVersion <> " -> " <> maybe "" render url
+      putStrLn
+        . unpack
+        $ displayLangAtVersion ext ghcVersion
+        <> " -> "
+        <> maybe "" render url
 
 getLanguagesFromFile :: FilePath -> IO (Set LanguageExtension)
 getLanguagesFromFile fp = do
@@ -92,15 +95,15 @@ makeGHCRelease releaseVersion releaseLanguages =
 
 ghcUserGuideURL :: GHCVersion -> URI
 ghcUserGuideURL v@(GHCVersion {..}) =
-  fromMaybe baseURI $
-    emptyURI
+  fromMaybe baseURI
+    $ emptyURI
       { uriScheme = Nothing,
         uriAuthority = Left False,
         uriPath = sequence pathsNE >>= \paths -> pure (True, paths),
         uriQuery = [],
         uriFragment = Nothing
       }
-      `relativeTo` baseURI
+    `relativeTo` baseURI
   where
     versionNumbers = [major, minor, patch]
     ghcPath = mkPathPiece $ pack "~ghc"

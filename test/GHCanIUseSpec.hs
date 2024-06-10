@@ -3,17 +3,17 @@
 
 module GHCanIUseSpec where
 
+import Control.Concurrent.ParallelIO (parallelInterleaved)
 import qualified Data.Map as Map
 import qualified Data.Set as Set
 import Data.Text (unpack)
 import GHCanIUse.CLI
 import GHCanIUse.Types
 import Network.HTTP.Req
+import Options.Generic (Unwrapped)
 import Relude
 import Test.Syd
 import Text.URI
-import Options.Generic (Unwrapped)
-import Control.Concurrent.ParallelIO (parallelInterleaved)
 
 checkURLDocExists :: URI -> IO ()
 checkURLDocExists url' = do
@@ -43,6 +43,6 @@ spec =
         [release] -> do
           let docs = releaseLanguages release
           let urls = catMaybes $ Map.elems $ unLanguageExtensionsDocs docs
-          void $ liftIO $ parallelInterleaved $  checkURLDocExists <$>   urls       
+          void $ liftIO $ parallelInterleaved $ checkURLDocExists <$> urls
         [] -> expectationFailure $ "Couldn't process " <> show v
         _ -> expectationFailure "Produced mored releases than 1"

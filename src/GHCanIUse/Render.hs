@@ -16,7 +16,7 @@ import qualified Paths_ghcaniuse as GHCanIUse
 import Relude
 import Text.URI (render)
 
-(!) :: With a => a -> Attribute -> a
+(!) :: (With a) => a -> Attribute -> a
 (!) a b = a `with` [b]
 
 flexRow :: (With (arg -> result), Term arg result) => arg -> result
@@ -34,13 +34,16 @@ arrows = p_ [class_ "arrows tc f3 pl2"] do
   span_ ! class_ "up-arrow ml-1" $ "↑"
 
 generateHTMLTable :: LanguageExtensionsMap -> Html ()
-generateHTMLTable languageExtensions = article_ ! class_ "w100" $
-  table_ [id_ "ghc-extensions-table", class_ "bg-white m0"] do
+generateHTMLTable languageExtensions = article_
+  ! class_ "w100"
+  $ table_ [id_ "ghc-extensions-table", class_ "bg-white m0"] do
     thead_ $ tr_ [class_ "bg-white"] do
       th_ $ flexRow $ h4_ "Language Extensions" >> arrows
       mapM_ th_ $ displayReleaseHTML <$> allReleases
-    tbody_ ! class_ "lh-solid" $
-      forM_ allExtensions $ \extension -> tr_ do
+    tbody_
+      ! class_ "lh-solid"
+      $ forM_ allExtensions
+      $ \extension -> tr_ do
         th_ ! class_ "tl bg-white" $ toHtml $ unLanguageExtension extension
         forM_ allReleases $ renderCell extension
   where
@@ -90,9 +93,9 @@ template content = doctypehtml_ do
   body_ [class_ "f4 bg-black pr flex flex-column"] do
     header
     content
-    script_ [type_ "text/javascript"] $
-      tableSort
-        <> "\nnew Tablesort(document.getElementById('ghc-extensions-table'));"
+    script_ [type_ "text/javascript"]
+      $ tableSort
+      <> "\nnew Tablesort(document.getElementById('ghc-extensions-table'));"
   where
     keywords = "GHC, haskell, language extensions, table, nix, NixOS, table"
     description = "Browse the supported language extensions for different GHC versions."
