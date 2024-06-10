@@ -6,10 +6,11 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
+      - uses: jlumbroso/free-disk-space@main
       - name: install nix
-        uses: cachix/install-nix-action@v20
-      - uses: cachix/cachix-action@v12
+        uses: cachix/install-nix-action@v27
+      - uses: cachix/cachix-action@v15
         with:
           name: opensource
           authToken: '${{ secrets.CACHIX_AUTH_TOKEN }}'
@@ -19,10 +20,10 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
       - name: install nix
-        uses: cachix/install-nix-action@v20
-      - uses: cachix/cachix-action@v12
+        uses: cachix/install-nix-action@v27
+      - uses: cachix/cachix-action@v15
         with:
           name: opensource
           authToken: '${{ secrets.CACHIX_AUTH_TOKEN }}'
