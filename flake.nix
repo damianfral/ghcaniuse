@@ -87,9 +87,9 @@
         "ghc-9.2.8" = pkgs2405.haskell.compiler.ghc928;
         "ghc-9.4.6" = pkgs2405.haskell.compiler.ghc946;
         "ghc-9.6.5" = pkgs2405.haskell.compiler.ghc965;
-        "ghc-9.8.2" = pkgs.haskell.compiler.ghc982;
-        "ghc-9.10.1" = pkgs.haskell.compiler.ghc9101;
-        "ghc-9.12.1" = pkgs.haskell.compiler.ghc9121;
+        "ghc-9.8.4" = pkgs.haskell.compiler.ghc984;
+        "ghc-9.10.2" = pkgs.haskell.compiler.ghc9102;
+        "ghc-9.12.2" = pkgs.haskell.compiler.ghc9122;
       };
       precommitCheck = inputs.pre-commit-hooks.lib.${system}.run {
         src = ./.;
