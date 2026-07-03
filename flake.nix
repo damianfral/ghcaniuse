@@ -9,7 +9,7 @@
     nixpkgs-2003 = {url = "github:NixOS/nixpkgs/release-20.03";};
     nixpkgs-2305 = {url = "github:NixOS/nixpkgs/release-23.05";};
     nixpkgs-2405 = {url = "github:NixOS/nixpkgs/release-24.05";};
-    nixpkgs = {url = "github:NixOS/nixpkgs";};
+    nixpkgs-2605 = {url = "github:NixOS/nixpkgs/release-26.05";};
     flake-utils = {url = "github:numtide/flake-utils";};
     nix-filter.url = "github:numtide/nix-filter";
     pre-commit-hooks.url = "github:cachix/pre-commit-hooks.nix";
@@ -62,7 +62,8 @@
       pkgs2003 = pkgsFor inputs.nixpkgs-2003 system;
       pkgs2305 = pkgsFor inputs.nixpkgs-2305 system;
       pkgs2405 = pkgsFor inputs.nixpkgs-2405 system;
-      pkgs = pkgsFor inputs.nixpkgs system;
+      pkgs2605 = pkgsFor inputs.nixpkgs-2605 system;
+      pkgs = pkgs2605;
       mkDerivationLanguageExtensions = name: ghc:
         pkgs.stdenv.mkDerivation {
           name = "language-extensions-for-${name}";
@@ -88,8 +89,9 @@
         "ghc-9.4.6" = pkgs2405.haskell.compiler.ghc946;
         "ghc-9.6.5" = pkgs2405.haskell.compiler.ghc965;
         "ghc-9.8.4" = pkgs.haskell.compiler.ghc984;
-        "ghc-9.10.2" = pkgs.haskell.compiler.ghc9102;
-        "ghc-9.12.2" = pkgs.haskell.compiler.ghc9122;
+        "ghc-9.10.3" = pkgs.haskell.compiler.ghc9103;
+        "ghc-9.12.4" = pkgs.haskell.compiler.ghc9124;
+        "ghc-9.14.1" = pkgs.haskell.compiler.ghc9141;
       };
       precommitCheck = inputs.pre-commit-hooks.lib.${system}.run {
         src = ./.;

@@ -27,7 +27,7 @@ allGHCVersions =
   Set.fromList
     [ GHCVersion {..}
       | major <- [7 .. 12],
-        minor <- [0, 2 .. 12],
+        minor <- [0, 2 .. 14],
         patch <- [0 .. 9]
     ]
 
