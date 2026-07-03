@@ -117,6 +117,7 @@
         ghcaniuse-web = pkgs.stdenv.mkDerivation {
           name = "ghcaniuse-web";
           phases = ["buildPhase" "installPhase"];
+          buildInputs = [pkgs.cacert];
           buildPhase = apps.ghcaniuse-gen.program;
           installPhase = ''
             mkdir -p $out
