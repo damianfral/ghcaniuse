@@ -1,6 +1,6 @@
 # GHCanIUse
 
-## Overview
+![screenshot](screenshot.png)
 
 GHCanIUse is a tool that generates an HTML page with a table of supported
 language extensions for different versions of GHC (Glasgow Haskell Compiler). It
