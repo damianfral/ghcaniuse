@@ -1,5 +1,5 @@
 {
-  description = "angelagesteira.com website";
+  description = "GHC language extension support checker across compiler versions";
 
   inputs = {
     nixpkgs-1803 = {
