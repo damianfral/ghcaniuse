@@ -14,8 +14,13 @@ jobs:
         with:
           name: opensource
           authToken: '${{ secrets.CACHIX_AUTH_TOKEN }}'
+      - uses: damianfral/nix-cache-lookup@master
+        id: cache-lookup-default
+        with:
+          flake-attribute: .#default
       - run: nix build --accept-flake-config --option sandbox false
 
+        if: steps.cache-lookup-default.outputs.cached != 'true'
   build-dev-shell:
     runs-on: ubuntu-latest
     steps:
@@ -27,4 +32,9 @@ jobs:
         with:
           name: opensource
           authToken: '${{ secrets.CACHIX_AUTH_TOKEN }}'
+      - uses: damianfral/nix-cache-lookup@master
+        id: cache-lookup-dev-shell-default
+        with:
+          flake-attribute: .#devShells.x86_64-linux.default
       - run: nix build .#devShells.x86_64-linux.default --accept-flake-config
+        if: steps.cache-lookup-dev-shell-default.outputs.cached != 'true'
