@@ -6,6 +6,7 @@ cabal-version: 1.12
 
 name:           ghcaniuse
 version:        1.0.0.0
+synopsis:       GHC language extension support checker across compiler versions
 build-type:     Simple
 extra-source-files:
     ./assets/github.svg

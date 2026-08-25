@@ -1,4 +1,5 @@
 name: ghcaniuse
+synopsis: GHC language extension support checker across compiler versions
 version: 1.0.0.0
 
 extra-source-files:
